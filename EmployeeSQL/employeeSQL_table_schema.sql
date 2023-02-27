@@ -1,76 +1,124 @@
-﻿-- Exported from QuickDBD: https://www.quickdatabasediagrams.com/
--- Link to schema: https://app.quickdatabasediagrams.com/#/d/wFClrt
--- NOTE! If you have used non-SQL datatypes in your design, you will have to change these here.
+-- Table: public.departments
 
+-- DROP TABLE IF EXISTS public.departments;
 
-CREATE TABLE "departments" (
-    "dept_no" VARCHAR(30)   NOT NULL,
-    "dept_name" VARCHAR(30)   NOT NULL,
-    CONSTRAINT "pk_departments" PRIMARY KEY (
-        "dept_no"
-     )
-);
+CREATE TABLE IF NOT EXISTS public.departments
+(
+    dept_no character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    dept_name character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT pk_departments PRIMARY KEY (dept_no)
+)
 
-CREATE TABLE "dept_emp" (
-    "emp_no" INT   NOT NULL,
-    "dept_no" VARCHAR(30)   NOT NULL,
-    CONSTRAINT "pk_dept_emp" PRIMARY KEY (
-        "emp_no"
-     )
-);
+TABLESPACE pg_default;
 
-CREATE TABLE "dept_mangaer" (
-    "dept_no" VARCHAR(30)   NOT NULL,
-    "emp_no" INT   NOT NULL,
-    CONSTRAINT "pk_dept_mangaer" PRIMARY KEY (
-        "emp_no"
-     )
-);
+ALTER TABLE IF EXISTS public.departments
+    OWNER to postgres;
 
-CREATE TABLE "employees" (
-    "emp_no" INT   NOT NULL,
-    "emp_title_id" VARCHAR(30)   NOT NULL,
-    "birth_date" DATE   NOT NULL,
-    "first_name" VARCHAR(30)   NOT NULL,
-    "last_name" VARCHAR(30)   NOT NULL,
-    "sex" VARCHAR(1)   NOT NULL,
-    "hire_date" DATE   NOT NULL,
-    CONSTRAINT "pk_employees" PRIMARY KEY (
-        "emp_no"
-     )
-);
+-- Table: public.dept_emp
 
-CREATE TABLE "salaries" (
-    "emp_no" INT   NOT NULL,
-    "salary" INT   NOT NULL,
-    CONSTRAINT "pk_salaries" PRIMARY KEY (
-        "emp_no"
-     )
-);
+-- DROP TABLE IF EXISTS public.dept_emp;
 
-CREATE TABLE "titles" (
-    "title_id" VARCHAR(30)   NOT NULL,
-    "title" VARCHAR(30)   NOT NULL,
-    CONSTRAINT "pk_titles" PRIMARY KEY (
-        "title_id"
-     )
-);
+CREATE TABLE IF NOT EXISTS public.dept_emp
+(
+    emp_no integer NOT NULL,
+    dept_no character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT pk_dept_emp PRIMARY KEY (emp_no),
+    CONSTRAINT fk_dept_emp_dept_no FOREIGN KEY (dept_no)
+        REFERENCES public.departments (dept_no) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_dept_emp_emp_no FOREIGN KEY (emp_no)
+        REFERENCES public.employees (emp_no) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
 
-ALTER TABLE "dept_emp" ADD CONSTRAINT "fk_dept_emp_emp_no" FOREIGN KEY("emp_no")
-REFERENCES "employees" ("emp_no");
+TABLESPACE pg_default;
 
-ALTER TABLE "dept_emp" ADD CONSTRAINT "fk_dept_emp_dept_no" FOREIGN KEY("dept_no")
-REFERENCES "departments" ("dept_no");
+ALTER TABLE IF EXISTS public.dept_emp
+    OWNER to postgres;
 
-ALTER TABLE "dept_mangaer" ADD CONSTRAINT "fk_dept_mangaer_dept_no" FOREIGN KEY("dept_no")
-REFERENCES "departments" ("dept_no");
+-- Table: public.dept_mangaer
 
-ALTER TABLE "dept_mangaer" ADD CONSTRAINT "fk_dept_mangaer_emp_no" FOREIGN KEY("emp_no")
-REFERENCES "employees" ("emp_no");
+-- DROP TABLE IF EXISTS public.dept_mangaer;
 
-ALTER TABLE "employees" ADD CONSTRAINT "fk_employees_emp_title_id" FOREIGN KEY("emp_title_id")
-REFERENCES "titles" ("title_id");
+CREATE TABLE IF NOT EXISTS public.dept_mangaer
+(
+    dept_no character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    emp_no integer NOT NULL,
+    CONSTRAINT pk_dept_mangaer PRIMARY KEY (emp_no),
+    CONSTRAINT fk_dept_mangaer_dept_no FOREIGN KEY (dept_no)
+        REFERENCES public.departments (dept_no) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_dept_mangaer_emp_no FOREIGN KEY (emp_no)
+        REFERENCES public.employees (emp_no) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
 
-ALTER TABLE "salaries" ADD CONSTRAINT "fk_salaries_emp_no" FOREIGN KEY("emp_no")
-REFERENCES "employees" ("emp_no");
+TABLESPACE pg_default;
 
+ALTER TABLE IF EXISTS public.dept_mangaer
+    OWNER to postgres;
+
+-- Table: public.employees
+
+-- DROP TABLE IF EXISTS public.employees;
+
+CREATE TABLE IF NOT EXISTS public.employees
+(
+    emp_no integer NOT NULL,
+    emp_title_id character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    birth_date date NOT NULL,
+    first_name character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    last_name character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    sex character varying(1) COLLATE pg_catalog."default" NOT NULL,
+    hire_date date NOT NULL,
+    CONSTRAINT pk_employees PRIMARY KEY (emp_no),
+    CONSTRAINT fk_employees_emp_title_id FOREIGN KEY (emp_title_id)
+        REFERENCES public.titles (title_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.employees
+    OWNER to postgres;
+
+-- Table: public.salaries
+
+-- DROP TABLE IF EXISTS public.salaries;
+
+CREATE TABLE IF NOT EXISTS public.salaries
+(
+    emp_no integer NOT NULL,
+    salary integer NOT NULL,
+    CONSTRAINT pk_salaries PRIMARY KEY (emp_no),
+    CONSTRAINT fk_salaries_emp_no FOREIGN KEY (emp_no)
+        REFERENCES public.employees (emp_no) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.salaries
+    OWNER to postgres;
+
+-- Table: public.titles
+
+-- DROP TABLE IF EXISTS public.titles;
+
+CREATE TABLE IF NOT EXISTS public.titles
+(
+    title_id character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    title character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT pk_titles PRIMARY KEY (title_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.titles
+    OWNER to postgres;
