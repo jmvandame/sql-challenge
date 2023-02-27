@@ -22,13 +22,9 @@ CREATE TABLE IF NOT EXISTS public.dept_emp
 (
     emp_no integer NOT NULL,
     dept_no character varying(30) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT pk_dept_emp PRIMARY KEY (emp_no),
+    CONSTRAINT pk_dept_emp PRIMARY KEY (emp_no, dept_no),
     CONSTRAINT fk_dept_emp_dept_no FOREIGN KEY (dept_no)
         REFERENCES public.departments (dept_no) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT fk_dept_emp_emp_no FOREIGN KEY (emp_no)
-        REFERENCES public.employees (emp_no) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
